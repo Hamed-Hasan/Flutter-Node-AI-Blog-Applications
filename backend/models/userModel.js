@@ -17,6 +17,20 @@ const userSchema = new mongoose.Schema({
     enum: userRoles,
     default: 'reader',
   },
+
+  bio: {
+    type: String,
+    trim: true,
+  },
+
+  profilePicture: {
+    type: String, // URL to the image
+  },
+  
+  socialLinks: {
+    github: { type: String, trim: true },
+    twitter: { type: String, trim: true },
+  },
 });
 
 const User = mongoose.model('User', userSchema);
