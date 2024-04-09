@@ -67,4 +67,49 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+
+
+// Update User Profile
+const updateUserProfile = async (req, res) => {
+  try {
+    const { username, bio, profilePicture, socialLinks } = req.body;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check if the new username is already taken by another user
+    if (username && username !== user.username) {
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Username already taken' });
+      }
+      user.username = username;
+    }
+
+    user.bio = bio || user.bio;
+    user.profilePicture = profilePicture || user.profilePicture;
+    user.socialLinks = socialLinks || user.socialLinks;
+
+    const updatedUser = await user.save();
+
+    res.json({
+      _id: updatedUser._id,
+      username: updatedUser.username,
+      role: updatedUser.role,
+      bio: updatedUser.bio,
+      profilePicture: updatedUser.profilePicture,
+      socialLinks: updatedUser.socialLinks,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error during profile update' });
+  }
+};
+
+
+module.exports = { 
+  registerUser, 
+  loginUser,
+  updateUserProfile,
+};

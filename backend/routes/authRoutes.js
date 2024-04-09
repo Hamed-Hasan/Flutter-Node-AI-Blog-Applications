@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser } = require('../controllers/authController');
+const { registerUser, loginUser, updateUserProfile } = require('../controllers/authController');
 
 
 /**
@@ -108,8 +108,49 @@ const { registerUser, loginUser } = require('../controllers/authController');
  *         description: Server error
  */
 
+/**
+ * @swagger
+ * /profile:
+ *   put:
+ *     summary: Update user profile
+ *     description: Allows users to update their profile information including username.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               bio:
+ *                 type: string
+ *               profilePicture:
+ *                 type: string
+ *               socialLinks:
+ *                 type: object
+ *                 properties:
+ *                   github:
+ *                     type: string
+ *                   twitter:
+ *                     type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully.
+ *       400:
+ *         description: Username already taken.
+ *       401:
+ *         description: Unauthorized.
+ *       500:
+ *         description: Server error.
+ */
+
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
+router.put('/profile',  updateUserProfile);
+
 
 module.exports = router;
