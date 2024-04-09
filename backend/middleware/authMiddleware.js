@@ -24,4 +24,11 @@ const roleAuth = (roles) => {
   };
 };
 
-module.exports = { roleAuth };
+// Function to generate JWT
+const generateToken = (user) => {
+    return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
+  };
+
+module.exports = { roleAuth, generateToken };
