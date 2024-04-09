@@ -108,8 +108,32 @@ const updateUserProfile = async (req, res) => {
 };
 
 
+// Get User Details
+const getUserDetails = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      _id: user._id,
+      username: user.username,
+      role: user.role,
+      bio: user.bio,
+      profilePicture: user.profilePicture,
+      socialLinks: user.socialLinks,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error during fetching user details' });
+  }
+};
+
+
 module.exports = { 
   registerUser, 
   loginUser,
   updateUserProfile,
+  getUserDetails,
 };

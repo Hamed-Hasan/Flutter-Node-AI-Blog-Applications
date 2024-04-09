@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, updateUserProfile } = require('../controllers/authController');
+const { registerUser, loginUser, updateUserProfile, getUserDetails } = require('../controllers/authController');
 
 
 /**
@@ -147,10 +147,29 @@ const { registerUser, loginUser, updateUserProfile } = require('../controllers/a
  *         description: Server error.
  */
 
+/**
+ * @swagger
+ * /profile:
+ *   get:
+ *     summary: Get user details
+ *     description: Retrieves the details of the logged-in user.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User details retrieved successfully.
+ *       401:
+ *         description: Unauthorized.
+ *       404:
+ *         description: User not found.
+ *       500:
+ *         description: Server error.
+ */
+
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.put('/profile',  updateUserProfile);
-
+router.get('/profile',  getUserDetails);
 
 module.exports = router;
