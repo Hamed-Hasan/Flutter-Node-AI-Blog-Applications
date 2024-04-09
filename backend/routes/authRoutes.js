@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, updateUserProfile, getUserDetails } = require('../controllers/authController');
+const { registerUser, loginUser, updateUserProfile, getUserDetails, changePassword } = require('../controllers/authController');
 
 
 /**
@@ -166,10 +166,41 @@ const { registerUser, loginUser, updateUserProfile, getUserDetails } = require('
  *         description: Server error.
  */
 
+/**
+ * @swagger
+ * /change-password:
+ *   put:
+ *     summary: Change password
+ *     description: Allows users to change their password.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password changed successfully.
+ *       400:
+ *         description: Old password is incorrect.
+ *       401:
+ *         description: Unauthorized.
+ *       500:
+ *         description: Server error.
+ */
+
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.put('/profile',  updateUserProfile);
 router.get('/profile',  getUserDetails);
+router.put('/change-password', changePassword);
 
 module.exports = router;
