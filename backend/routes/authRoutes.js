@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { registerUser, loginUser, updateUserProfile, getUserDetails, changePassword } = require('../controllers/authController');
-const { authenticate } = require('../middleware/authMiddleware');
+const { authenticate, roleAuth } = require('../middleware/authMiddleware');
 
 
 /**
@@ -201,7 +201,7 @@ const { authenticate } = require('../middleware/authMiddleware');
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.put('/profile', authenticate, updateUserProfile);
-router.get('/profile', authenticate, getUserDetails);
+router.get('/profile', authenticate, getUserDetails, roleAuth(["admin"]));
 router.put('/change-password', authenticate, changePassword);
 
 
