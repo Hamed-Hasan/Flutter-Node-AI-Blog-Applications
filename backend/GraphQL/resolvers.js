@@ -4,6 +4,7 @@ const { getUserDetails, registerUser, loginUser, updateUserProfile, changePasswo
 const { generateToken } = require("../middleware/authMiddleware");
 const User = require("../models/userModel");
 const bcrypt = require('bcryptjs');
+const Post = require('../models/postModel');
 
 // Example authenticateLogin function
 const authenticateLogin = async (username, password) => {
@@ -118,6 +119,16 @@ const resolvers = {
             throw new Error('Error fetching user details');
           }
         },
+
+        getPosts: async () => {
+          return await Post.find().populate('author');
+        },
+        getPost: async (_, { _id }) => {
+          return await Post.findById(_id).populate('author');
+        },
+        getUserPosts: async (_, { authorId }) => {
+          return await Post.find({ author: authorId }).populate('author');
+        }
       },
   Mutation: {
     registerUser: async (_, { username, password, role }) => {
@@ -160,6 +171,47 @@ const resolvers = {
       
       // The result here depends on what the changePasswordGraphQL function returns
       return result;
+    },
+
+
+    createPost: async (_, { title, body }, { user, isAuthorized }) => {
+      isAuthorized(['author', 'admin']); // Ensure the user has one of the specified roles
+      return await Post.create({ title, body, author: user._id });
+    },
+    updatePost: async (_, { _id, title, body }, { user, isAuthorized }) => {
+      isAuthorized(['author', 'admin']); // Ensure the user has one of the specified roles
+      const post = await Post.findById(_id);
+
+      // You may want to check if the user is the author of the post
+      if (post.author.toString() !== user._id.toString()) {
+        throw new AuthenticationError('You do not have permission to update this post');
+      }
+
+      return await Post.findByIdAndUpdate(_id, { title, body }, { new: true });
+    },
+    deletePost: async (_, { _id }, { user, isAuthorized }) => {
+      isAuthorized(['author', 'admin']); // Ensure the user has one of the specified roles
+      const post = await Post.findById(_id);
+
+      // Similarly, check if the user is the author or has admin privileges
+      if (post.author.toString() !== user._id.toString() && user.role !== 'admin') {
+        throw new AuthenticationError('You do not have permission to delete this post');
+      }
+
+      await Post.findByIdAndDelete(_id);
+      return 'Post deleted successfully';
+    },
+    likePost: async (_, { _id }, { user }) => {
+      if (!user) throw new AuthenticationError('You must be logged in to like a post');
+      const post = await Post.findById(_id);
+      post.likes.push(user._id);
+      return await post.save();
+    },
+    dislikePost: async (_, { _id }, { user }) => {
+      if (!user) throw new AuthenticationError('You must be logged in to dislike a post');
+      const post = await Post.findById(_id);
+      post.dislikes.push(user._id);
+      return await post.save();
     },
   },
 };

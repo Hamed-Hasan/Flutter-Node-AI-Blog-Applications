@@ -1,6 +1,8 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
+# for user
+
   type User {
     _id: ID!
     username: String!
@@ -29,6 +31,40 @@ const typeDefs = gql`
   input SocialLinksInput {
     github: String
     twitter: String
+  }
+
+  # for post
+
+  type Post {
+    _id: ID!
+    title: String!
+    body: String!
+    author: User!
+    likes: [User!]
+    dislikes: [User!]
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type User {
+    _id: ID!
+    username: String!
+    role: String!
+    posts: [Post!]
+  }
+
+  type Query {
+    getPosts: [Post!]
+    getPost(_id: ID!): Post
+    getUserPosts(authorId: ID!): [Post!]
+  }
+
+  type Mutation {
+    createPost(title: String!, body: String!): Post
+    updatePost(_id: ID!, title: String, body: String): Post
+    deletePost(_id: ID!): String
+    likePost(_id: ID!): Post
+    dislikePost(_id: ID!): Post
   }
 `;
 
