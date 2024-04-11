@@ -1,4 +1,3 @@
-// apollo.js
 const { ApolloServer, AuthenticationError } = require('apollo-server-express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
@@ -12,7 +11,7 @@ const setupApolloServer = () => {
     resolvers,
     context: async ({ req }) => {
       let contextObj = { user: null };
-      
+
       try {
         const authHeader = req.headers.authorization;
         if (authHeader) {
@@ -25,12 +24,14 @@ const setupApolloServer = () => {
       } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
           console.error('Token has expired', error);
+          console.log(`Token expired at ${error.expiredAt.toISOString()}`);
+          throw new AuthenticationError('Session has expired. Please log in again.');
         } else {
           console.error('Error in authentication:', error);
           throw new AuthenticationError('Invalid or expired token');
         }
       }
-    
+
       return contextObj;
     }
   });

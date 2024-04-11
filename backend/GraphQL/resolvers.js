@@ -132,7 +132,14 @@ const resolvers = {
       },
   Mutation: {
     registerUser: async (_, { username, password, role }) => {
-      return await registerUserGraphQL(username, password, role);
+      // Your registerUserGraphQL implementation
+      const user = await registerUserGraphQL(username, password, role);
+      return {
+        _id: user._id,
+        username: user.username,
+        role: user.role,
+        token: user.token, // Include the token in the response
+      };
     },
    loginUser: async (_, { username, password }) => {
       try {

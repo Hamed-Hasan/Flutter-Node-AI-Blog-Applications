@@ -1,8 +1,7 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-# for user
-
+  # for user
   type User {
     _id: ID!
     username: String!
@@ -10,6 +9,7 @@ const typeDefs = gql`
     bio: String
     profilePicture: String
     socialLinks: SocialLinks
+    token: String
   }
 
   type SocialLinks {
@@ -34,7 +34,6 @@ const typeDefs = gql`
   }
 
   # for post
-
   type Post {
     _id: ID!
     title: String!
@@ -44,13 +43,6 @@ const typeDefs = gql`
     dislikes: [User!]
     createdAt: String!
     updatedAt: String!
-  }
-
-  type User {
-    _id: ID!
-    username: String!
-    role: String!
-    posts: [Post!]
   }
 
   type Query {
