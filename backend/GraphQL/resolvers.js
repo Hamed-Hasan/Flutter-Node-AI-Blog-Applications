@@ -121,11 +121,58 @@ const resolvers = {
         },
 
         getPosts: async () => {
-          return await Post.find().populate('author');
+          // Find all posts and populate the author field
+          let posts = await Post.find().populate('author');
+        
+          // Map over the posts to populate likes and dislikes while handling potential nulls
+          posts = await Promise.all(posts.map(async (post) => {
+            // Safely populate likes, filtering out any nulls
+            const populatedLikes = await User.find({
+              '_id': { $in: post.likes }
+            }, '_id username');
+        
+            // Safely populate dislikes, filtering out any nulls
+            const populatedDislikes = await User.find({
+              '_id': { $in: post.dislikes }
+            }, '_id username');
+        
+            // Return the post with populated fields
+            return {
+              ...post.toObject(),
+              likes: populatedLikes,
+              dislikes: populatedDislikes
+            };
+          }));
+        
+          return posts;
         },
+        
         getPost: async (_, { _id }) => {
-          return await Post.findById(_id).populate('author');
+          let post = await Post.findById(_id);
+          if (!post) {
+            throw new Error('Post not found');
+          }
+        
+          // Populate author
+          post = await post.populate('author');
+        
+          // Safely populate likes and dislikes
+          const populatedLikes = await User.find({
+            '_id': { $in: post.likes }
+          }, '_id username');
+        
+          const populatedDislikes = await User.find({
+            '_id': { $in: post.dislikes }
+          }, '_id username');
+        
+          // Return the post with populated likes and dislikes, ensuring they are not null
+          return {
+            ...post.toObject(),
+            likes: populatedLikes,
+            dislikes: populatedDislikes
+          };
         },
+        
         getUserPosts: async (_, { authorId }) => {
           return await Post.find({ author: authorId }).populate('author');
         }
@@ -192,8 +239,8 @@ const resolvers = {
     
     
     updatePost: async (_, { _id, title, body }, { user }) => {
-      console.log("🚀 ~ updatePost: ~ _id:", _id);
-      console.log("🚀 ~ updatePost: ~ user:", user);
+      // console.log("🚀 ~ updatePost: ~ _id:", _id);
+      // console.log("🚀 ~ updatePost: ~ user:", user);
     
       if (!user) {
         throw new AuthenticationError('Authentication required');
@@ -219,7 +266,12 @@ const resolvers = {
     },
     
     deletePost: async (_, { _id }, { user, isAuthorized }) => {
-      isAuthorized(['author', 'admin']); // Ensure the user has one of the specified roles
+      // isAuthorized(['author', 'admin']); // Ensure the user has one of the specified roles
+
+      if (!user) {
+        throw new AuthenticationError('Authentication required');
+      }
+
       const post = await Post.findById(_id);
 
       // Similarly, check if the user is the author or has admin privileges
@@ -231,17 +283,78 @@ const resolvers = {
       return 'Post deleted successfully';
     },
     likePost: async (_, { _id }, { user }) => {
-      if (!user) throw new AuthenticationError('You must be logged in to like a post');
-      const post = await Post.findById(_id);
-      post.likes.push(user._id);
-      return await post.save();
+      if (!user) {
+        throw new AuthenticationError('You must be logged in to like a post');
+      }
+    
+      let post = await Post.findById(_id);
+      if (!post) {
+        throw new Error('Post not found');
+      }
+    
+      const hasLiked = post.likes.some(likeUserId => likeUserId.toString() === user._id.toString());
+    
+      if (!hasLiked) {
+        post.likes.push(user._id);
+        await post.save();
+      }
+    
+      // Populate likes with a catch for any null references that might exist
+      post = await Post.findById(_id).populate({
+        path: 'likes',
+        match: { username: { $exists: true } },
+        select: '_id username'
+      });
+    
+      // If the post has already been liked by the user, return the message
+      if (hasLiked) {
+        return {
+          ...post.toObject(),
+          message: 'User has already liked the post'
+        };
+      }
+    
+      return post;
     },
+    
+    
+    
     dislikePost: async (_, { _id }, { user }) => {
-      if (!user) throw new AuthenticationError('You must be logged in to dislike a post');
-      const post = await Post.findById(_id);
-      post.dislikes.push(user._id);
-      return await post.save();
+      if (!user) {
+        throw new AuthenticationError('You must be logged in to dislike a post');
+      }
+    
+      let post = await Post.findById(_id);
+      if (!post) {
+        throw new Error('Post not found');
+      }
+    
+      const hasDisliked = post.dislikes.some(dislikeUserId => dislikeUserId.toString() === user._id.toString());
+    
+      if (!hasDisliked) {
+        post.dislikes.push(user._id);
+        await post.save();
+      }
+    
+      // Populate dislikes with a catch for any null references that might exist
+      post = await Post.findById(_id).populate({
+        path: 'dislikes',
+        match: { username: { $exists: true } },
+        select: '_id username'
+      });
+    
+      // If the post has already been disliked by the user, return the message
+      if (hasDisliked) {
+        return {
+          ...post.toObject(),
+          message: 'User has already disliked the post'
+        };
+      }
+    
+      return post;
     },
+    
+    
   },
 };
 

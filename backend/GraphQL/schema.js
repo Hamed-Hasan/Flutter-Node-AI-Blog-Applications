@@ -43,6 +43,7 @@ const typeDefs = gql`
     dislikes: [User!]
     createdAt: String!
     updatedAt: String!
+    message: String
   }
 
   type Query {
