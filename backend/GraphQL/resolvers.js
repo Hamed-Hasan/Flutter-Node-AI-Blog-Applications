@@ -181,21 +181,43 @@ const resolvers = {
     },
 
 
-    createPost: async (_, { title, body }, { user, isAuthorized }) => {
-      isAuthorized(['author', 'admin']); // Ensure the user has one of the specified roles
-      return await Post.create({ title, body, author: user._id });
+    createPost: async (_, { title, body }, { user }) => {
+      if (!user) throw new AuthenticationError('You must be logged in to create a post');
+    
+      // Assuming that `user` object contains the logged-in user's details including `_id`
+      const post = await Post.create({ title, body, author: user._id });
+    
+      return post.populate('author')// This will return the post with the author information populated
     },
-    updatePost: async (_, { _id, title, body }, { user, isAuthorized }) => {
-      isAuthorized(['author', 'admin']); // Ensure the user has one of the specified roles
+    
+    
+    updatePost: async (_, { _id, title, body }, { user }) => {
+      console.log("🚀 ~ updatePost: ~ _id:", _id);
+      console.log("🚀 ~ updatePost: ~ user:", user);
+    
+      if (!user) {
+        throw new AuthenticationError('Authentication required');
+      }
+    
       const post = await Post.findById(_id);
-
-      // You may want to check if the user is the author of the post
+    
+      if (!post) {
+        throw new Error('Post not found');
+      }
+    
       if (post.author.toString() !== user._id.toString()) {
         throw new AuthenticationError('You do not have permission to update this post');
       }
-
-      return await Post.findByIdAndUpdate(_id, { title, body }, { new: true });
+    
+      const updatedPost = await Post.findByIdAndUpdate(_id, { title, body }, { new: true }).populate('author');
+    
+      if (!updatedPost.author.username) {
+        throw new Error('Author username cannot be null');
+      }
+    
+      return updatedPost;
     },
+    
     deletePost: async (_, { _id }, { user, isAuthorized }) => {
       isAuthorized(['author', 'admin']); // Ensure the user has one of the specified roles
       const post = await Post.findById(_id);
