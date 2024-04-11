@@ -5,6 +5,9 @@ const { generateToken } = require("../middleware/authMiddleware");
 const User = require("../models/userModel");
 const bcrypt = require('bcryptjs');
 const Post = require('../models/postModel');
+const { formatDate } = require('../utils/formatDate');
+
+
 
 // Example authenticateLogin function
 const authenticateLogin = async (username, password) => {
@@ -140,7 +143,9 @@ const resolvers = {
             return {
               ...post.toObject(),
               likes: populatedLikes,
-              dislikes: populatedDislikes
+              dislikes: populatedDislikes,
+              createdAt: formatDate(post.createdAt),
+              updatedAt: formatDate(post.updatedAt)
             };
           }));
         
@@ -169,7 +174,9 @@ const resolvers = {
           return {
             ...post.toObject(),
             likes: populatedLikes,
-            dislikes: populatedDislikes
+            dislikes: populatedDislikes,
+            createdAt: formatDate(post.createdAt),
+            updatedAt: formatDate(post.updatedAt)
           };
         },
         
