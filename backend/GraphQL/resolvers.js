@@ -126,20 +126,18 @@ const resolvers = {
         getPosts: async () => {
           // Find all posts and populate the author field
           let posts = await Post.find().populate('author');
-        
-          // Map over the posts to populate likes and dislikes while handling potential nulls
+          
+          // Map over the posts to populate likes and dislikes while ensuring uniqueness
           posts = await Promise.all(posts.map(async (post) => {
-            // Safely populate likes, filtering out any nulls
-            const populatedLikes = await User.find({
-              '_id': { $in: post.likes }
-            }, '_id username');
-        
-            // Safely populate dislikes, filtering out any nulls
-            const populatedDislikes = await User.find({
-              '_id': { $in: post.dislikes }
-            }, '_id username');
-        
-            // Return the post with populated fields
+            // Ensure uniqueness
+            const uniqueLikes = [...new Set(post.likes.map(id => id.toString()))];
+            const uniqueDislikes = [...new Set(post.dislikes.map(id => id.toString()))];
+            
+            // Safely populate likes and dislikes
+            const populatedLikes = await User.find({ '_id': { $in: uniqueLikes } }, '_id username');
+            const populatedDislikes = await User.find({ '_id': { $in: uniqueDislikes } }, '_id username');
+            
+            // Construct the final post object
             return {
               ...post.toObject(),
               likes: populatedLikes,
@@ -149,8 +147,15 @@ const resolvers = {
             };
           }));
         
+          // Filter out posts with empty likes and dislikes arrays
+          posts = posts.filter(post => post.likes.length > 0 || post.dislikes.length > 0);
+        
+          // Log the final posts with populated fields
+          // console.log('Final posts with populated fields:', JSON.stringify(posts, null, 2));
           return posts;
         },
+        
+        
         
         getPost: async (_, { _id }) => {
           let post = await Post.findById(_id);
