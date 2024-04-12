@@ -6,6 +6,7 @@ const User = require("../models/userModel");
 const bcrypt = require('bcryptjs');
 const Post = require('../models/postModel');
 const { formatDate } = require('../utils/formatDate');
+const Comment = require('../models/commentModel');
 
 
 
@@ -189,7 +190,11 @@ const resolvers = {
           return await Post.find({ author: authorId }).populate('author');
         },
 
-        
+          // Get comments for a specific post
+    getComments: async (_, { postId }) => {
+      const comments = await Comment.find({ post: postId }).populate('author');
+      return comments;
+    },
       },
   Mutation: {
     registerUser: async (_, { username, password, role }) => {
@@ -368,7 +373,124 @@ const resolvers = {
       return post;
     },
     
+    // Create a new comment
+    createComment: async (_, { postId, content }, { user }) => {
+      if (!user) throw new AuthenticationError('You must be logged in to create a comment');
     
+      // Check if the post exists
+      const postExists = await Post.exists({ _id: postId });
+      if (!postExists) throw new Error('Post not found');
+    
+      const comment = await new Comment({
+        content,
+        author: user._id,
+        post: postId,
+      }).save();
+    
+      // Properly populate the 'post' field after saving the comment
+      await comment.populate('post');
+      await comment.populate('author');
+      return comment;
+    },
+    
+    
+
+    // Update an existing comment
+    updateComment: async (_, { commentId, content }, { user }) => {
+      if (!user) throw new AuthenticationError('You must be logged in to update a comment');
+
+      const comment = await Comment.findById(commentId);
+      if (!comment) throw new Error('Comment not found');
+
+      if (comment.author.toString() !== user._id.toString()) {
+        throw new AuthenticationError('You do not have permission to update this comment');
+      }
+
+      comment.content = content;
+      await comment.save();
+
+      return comment.populate('author');
+    },
+
+    // Delete an existing comment
+    deleteComment: async (_, { commentId }, { user }) => {
+      if (!user) throw new AuthenticationError('You must be logged in to delete a comment');
+
+      const comment = await Comment.findById(commentId);
+      if (!comment) throw new Error('Comment not found');
+
+      if (comment.author.toString() !== user._id.toString()) {
+        throw new AuthenticationError('You do not have permission to delete this comment');
+      }
+
+      await comment.remove();
+      return 'Comment deleted successfully';
+    },
+
+   // Like a comment
+likeComment: async (_, { commentId }, { user }) => {
+  if (!user) throw new AuthenticationError('You must be logged in to like a comment');
+
+  let comment = await Comment.findById(commentId);
+  if (!comment) throw new Error('Comment not found');
+
+  const hasLiked = comment.likes.some(likeUserId => likeUserId.toString() === user._id.toString());
+
+  if (!hasLiked) {
+    comment.likes.push(user._id);
+    await comment.save();
+  }
+
+  // Populate likes with a catch for any null references that might exist
+  comment = await Comment.findById(commentId).populate({
+    path: 'likes',
+    match: { username: { $exists: true } },
+    select: '_id username'
+  });
+
+  // If the comment has already been liked by the user, return the message
+  if (hasLiked) {
+    return {
+      ...comment.toObject(),
+      message: 'User has already liked the comment'
+    };
+  }
+
+  return comment;
+},
+
+// Dislike a comment
+dislikeComment: async (_, { commentId }, { user }) => {
+  if (!user) throw new AuthenticationError('You must be logged in to dislike a comment');
+
+  let comment = await Comment.findById(commentId);
+  if (!comment) throw new Error('Comment not found');
+
+  const hasDisliked = comment.dislikes.some(dislikeUserId => dislikeUserId.toString() === user._id.toString());
+
+  if (!hasDisliked) {
+    comment.dislikes.push(user._id);
+    await comment.save();
+  }
+
+  // Populate dislikes with a catch for any null references that might exist
+  comment = await Comment.findById(commentId).populate({
+    path: 'dislikes',
+    match: { username: { $exists: true } },
+    select: '_id username'
+  });
+
+  // If the comment has already been disliked by the user, return the message
+  if (hasDisliked) {
+    return {
+      ...comment.toObject(),
+      message: 'User has already disliked the comment'
+    };
+  }
+
+  return comment;
+},
+
   },
 };
 
