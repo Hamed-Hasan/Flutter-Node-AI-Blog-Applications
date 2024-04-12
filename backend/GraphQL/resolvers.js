@@ -415,81 +415,116 @@ const resolvers = {
     // Delete an existing comment
     deleteComment: async (_, { commentId }, { user }) => {
       if (!user) throw new AuthenticationError('You must be logged in to delete a comment');
-
+    
       const comment = await Comment.findById(commentId);
       if (!comment) throw new Error('Comment not found');
-
+    
       if (comment.author.toString() !== user._id.toString()) {
         throw new AuthenticationError('You do not have permission to delete this comment');
       }
-
-      await comment.remove();
+    
+      await Comment.findByIdAndDelete(commentId); // Use findByIdAndDelete instead of remove
       return 'Comment deleted successfully';
     },
+    
 
    // Like a comment
-likeComment: async (_, { commentId }, { user }) => {
-  if (!user) throw new AuthenticationError('You must be logged in to like a comment');
-
-  let comment = await Comment.findById(commentId);
-  if (!comment) throw new Error('Comment not found');
-
-  const hasLiked = comment.likes.some(likeUserId => likeUserId.toString() === user._id.toString());
-
-  if (!hasLiked) {
-    comment.likes.push(user._id);
-    await comment.save();
-  }
-
-  // Populate likes with a catch for any null references that might exist
-  comment = await Comment.findById(commentId).populate({
-    path: 'likes',
-    match: { username: { $exists: true } },
-    select: '_id username'
-  });
-
-  // If the comment has already been liked by the user, return the message
-  if (hasLiked) {
-    return {
-      ...comment.toObject(),
-      message: 'User has already liked the comment'
-    };
-  }
-
-  return comment;
-},
-
+   likeComment: async (_, { commentId }, { user }) => {
+    try {
+      console.log('Starting likeComment resolver');
+      console.log('CommentId:', commentId);
+  
+      // Find the comment by ID
+      let comment = await Comment.findById(commentId);
+  
+      console.log('Comment found:', comment);
+  
+      if (!comment) {
+        throw new Error('Comment not found');
+      }
+  
+      // Populate the author field of the comment
+      await comment.populate('author');
+  
+      console.log('Comment after population:', comment);
+  
+      // Check if the user has already liked the comment
+      if (comment.likes.some(like => like.toString() === user.id)) {
+        throw new Error('User has already liked the comment');
+      }
+  
+      // Add the user's ID to the likes array
+      comment.likes.push(user.id);
+  
+      // Save the updated comment
+      await comment.save();
+  
+      // Populate the likes array with user objects
+      await comment.populate('likes')
+  
+      console.log('Comment liked successfully');
+  
+      // Set the success message
+      const message = 'Comment liked successfully';
+  
+      return { ...comment.toObject(), message };
+    } catch (error) {
+      console.error('Error in likeComment resolver:', error);
+      throw error;
+    }
+  },
+  
+  
+  
 // Dislike a comment
 dislikeComment: async (_, { commentId }, { user }) => {
-  if (!user) throw new AuthenticationError('You must be logged in to dislike a comment');
+  try {
+    if (!user) throw new AuthenticationError('You must be logged in to dislike a comment');
 
-  let comment = await Comment.findById(commentId);
-  if (!comment) throw new Error('Comment not found');
+    console.log('Starting dislikeComment resolver');
+    console.log('CommentId:', commentId);
 
-  const hasDisliked = comment.dislikes.some(dislikeUserId => dislikeUserId.toString() === user._id.toString());
+    let comment = await Comment.findById(commentId);
+    if (!comment) throw new Error('Comment not found');
 
-  if (!hasDisliked) {
-    comment.dislikes.push(user._id);
-    await comment.save();
+    // Check if the user has already disliked the comment
+    const hasDisliked = comment.dislikes.some(dislikeUserId => dislikeUserId.toString() === user._id.toString());
+
+    if (!hasDisliked) {
+      comment.dislikes.push(user._id);
+      await comment.save();
+    }
+
+    // Populate dislikes with a catch for any null references that might exist
+    comment = await Comment.findById(commentId)
+      .populate({
+        path: 'dislikes',
+        match: { username: { $exists: true } },
+        select: '_id username'
+      })
+      .populate('author'); // Populate the author field
+
+    // If the comment has already been disliked by the user, return the message
+    if (hasDisliked) {
+      return {
+        ...comment.toObject(),
+        message: 'User has already disliked the comment'
+      };
+    }
+
+    console.log('Comment disliked successfully');
+
+    // Set the success message
+    const message = 'Comment disliked successfully';
+
+    return { ...comment.toObject(), message };
+  } catch (error) {
+    console.error('Error in dislikeComment resolver:', error);
+    throw error;
   }
-
-  // Populate dislikes with a catch for any null references that might exist
-  comment = await Comment.findById(commentId).populate({
-    path: 'dislikes',
-    match: { username: { $exists: true } },
-    select: '_id username'
-  });
-
-  // If the comment has already been disliked by the user, return the message
-  if (hasDisliked) {
-    return {
-      ...comment.toObject(),
-      message: 'User has already disliked the comment'
-    };
-  }
-
-  return comment;
 },
+
+
 
   },
 };

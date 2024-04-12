@@ -65,9 +65,12 @@ const typeDefs = gql`
     _id: ID!
     content: String!
     author: User!
+    likes: [User]
+    dislikes: [User]
     post: Post!
     createdAt: String!
     updatedAt: String!
+    message: String
   }
 
   extend type Query {
