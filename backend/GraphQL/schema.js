@@ -59,6 +59,30 @@ const typeDefs = gql`
     likePost(_id: ID!): Post
     dislikePost(_id: ID!): Post
   }
+
+  # For Comment type
+  type Comment {
+    _id: ID!
+    content: String!
+    author: User!
+    post: Post!
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  extend type Query {
+    # Existing queries
+    getComments(postId: ID!): [Comment!]
+  }
+
+  extend type Mutation {
+    # Existing mutations
+    createComment(postId: ID!, content: String!): Comment
+    updateComment(commentId: ID!, content: String!): Comment
+    deleteComment(commentId: ID!): String
+    likeComment(commentId: ID!): Comment
+    dislikeComment(commentId: ID!): Comment
+  }
 `;
 
 module.exports = typeDefs;

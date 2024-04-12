@@ -187,7 +187,9 @@ const resolvers = {
         
         getUserPosts: async (_, { authorId }) => {
           return await Post.find({ author: authorId }).populate('author');
-        }
+        },
+
+        
       },
   Mutation: {
     registerUser: async (_, { username, password, role }) => {
