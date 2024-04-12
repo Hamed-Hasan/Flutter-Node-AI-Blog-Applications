@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Post = require('../models/postModel');
+
 
 const connectDB = async () => {
   try {
@@ -7,9 +9,14 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
     console.log('MongoDB connected');
+
+    // After successful connection, create indexes
+    await Post.createIndexes();
+    console.log('Indexes created for Post model');
+    
   } catch (error) {
-    console.error(error);
-    process.exit(1);
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1); // Exit process with failure
   }
 };
 

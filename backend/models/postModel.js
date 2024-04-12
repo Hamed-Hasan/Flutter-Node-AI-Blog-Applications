@@ -5,10 +5,12 @@ const postSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+    index: true, // Add an index for individual field
   },
   body: {
     type: String,
     required: true,
+    index: true, // Add an index for individual field
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -24,6 +26,9 @@ const postSchema = new mongoose.Schema({
     ref: 'User' 
   }],
 }, { timestamps: true });
+
+// Create a compound text index on title and body
+postSchema.index({ title: 'text', body: 'text' });
 
 const Post = mongoose.model('Post', postSchema);
 

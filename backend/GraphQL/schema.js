@@ -45,9 +45,10 @@ const typeDefs = gql`
     updatedAt: String!
     message: String
   }
+  
 
   type Query {
-    getPosts: [Post!]
+    getPosts(page: Int, limit: Int, searchTerm: String): PaginatedPosts
     getPost(_id: ID!): Post
     getUserPosts(authorId: ID!): [Post!]
   }
@@ -73,9 +74,20 @@ const typeDefs = gql`
     message: String
   }
 
+ 
+  type PaginatedPosts {
+    posts: [Post!]
+    total: Int
+    page: Int
+    totalPages: Int
+    hasNextPage: Boolean
+    hasPrevPage: Boolean
+  }
+
   extend type Query {
     # Existing queries
     getComments(postId: ID!): [Comment!]
+    getPosts(page: Int, limit: Int, searchTerm: String): PaginatedPosts
   }
 
   extend type Mutation {
