@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_view.dart';
+
 class forgot_password_view extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,40 +14,46 @@ class forgot_password_view extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // Email TextFormField
+            // Username TextFormField
             TextFormField(
-              keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                labelText: 'Email',
-                hintText: 'example@example.com',
+                labelText: 'Username',
+                hintText: 'Enter your username',
               ),
             ),
             SizedBox(height: 20),
-
-            // Reset Password Button
-                ElevatedButton(
-        child: Text('Reset Password'),
-        onPressed: () {
-          // TODO: Implement reset password logic
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.purple, // Background color
-          foregroundColor: Colors.white, // Text color
-        ),
-      ),
-          TextButton(
-          child: Text('Back to Login'),
-          onPressed: () {
-            // Navigate to the LoginView
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => login_view(),
+            // Password TextFormField
+            TextFormField(
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                hintText: 'Enter your password',
               ),
-            );
-          },
-        ),
+            ),
+            SizedBox(height: 20),
+            // Reset Password Button
+            ElevatedButton(
+              child: Text('Reset Password'),
+              onPressed: () {
+                // TODO: Implement reset password logic
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple, // Background color
+                foregroundColor: Colors.white, // Text color
+              ),
+            ),
+            TextButton(
+              child: Text('Back to Login'),
+              onPressed: () {
+                // Navigate to the LoginView
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => login_view(),
+                  ),
+                );
+              },
+            ),
             Spacer(),
-
             // Footer Text
             Text(
               'By using Classroom, you agree to the Terms and Privacy Policy.',
