@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'login_view.dart';
 
-class register_view extends StatelessWidget {
+class register_view extends StatefulWidget {
+  @override
+  _RegisterViewState createState() => _RegisterViewState();
+}
+
+class _RegisterViewState extends State<register_view> {
+  bool _obscureText = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +21,6 @@ class register_view extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // Name TextFormField
             TextFormField(
               decoration: InputDecoration(
                 labelText: 'Name',
@@ -22,8 +28,6 @@ class register_view extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-
-            // Email TextFormField
             TextFormField(
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
@@ -32,38 +36,37 @@ class register_view extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-
-            // Password TextFormField
             TextFormField(
-              obscureText: true,
+              obscureText: _obscureText,
               decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter password',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.visibility),
+                  icon: Icon(
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                  ),
                   onPressed: () {
-                    // TODO: Implement password visibility toggle
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
                   },
                 ),
               ),
             ),
             SizedBox(height: 20),
-
-            // Register Button
             ElevatedButton(
               child: Text('Register'),
               onPressed: () {
                 // TODO: Implement registration logic
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple, // Background color
-                 foregroundColor: Colors.white,
+                backgroundColor: Colors.purple,
+                foregroundColor: Colors.white,
               ),
             ),
             TextButton(
               child: Text('Already have an account? Log in'),
               onPressed: () {
-                // Navigate to the LoginView
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
                     builder: (context) => LoginView(),
@@ -72,8 +75,6 @@ class register_view extends StatelessWidget {
               },
             ),
             Spacer(),
-
-            // Footer Text
             Text(
               'By using Classroom, you agree to the Terms and Privacy Policy.',
               textAlign: TextAlign.center,
