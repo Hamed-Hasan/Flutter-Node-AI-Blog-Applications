@@ -57,6 +57,7 @@ class register_view extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple, // Background color
+                 foregroundColor: Colors.white,
               ),
             ),
             TextButton(

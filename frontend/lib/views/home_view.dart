@@ -72,21 +72,22 @@ class HomePage extends StatelessWidget {
                       blockButton: true,
                     ),
                     SizedBox(height: 16),
-                    GFButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => login_view(),
-                          ),
-                        );
-                      },
-                      text: 'Log in',
-                      type: GFButtonType.outline,
-                      shape: GFButtonShape.pills,
-                      size: GFSize.LARGE,
-                      color: Theme.of(context).primaryColor,
-                      blockButton: true,
-                    ),
+                GFButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => login_view(),
+                  ),
+                );
+              },
+              text: 'Log in',
+              type: GFButtonType.outline,
+              shape: GFButtonShape.pills,
+              size: GFSize.LARGE,
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white, // Set the text color to white
+              blockButton: true,
+            ),
                   ],
                 ),
               ),

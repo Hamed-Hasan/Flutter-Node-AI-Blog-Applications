@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'forgot_password_view.dart';
 
 class login_view extends StatelessWidget {
   @override
@@ -42,14 +43,20 @@ class login_view extends StatelessWidget {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
+                 foregroundColor: Colors.white,
               ),
             ),
             TextButton(
-              child: Text('Forgot password?'),
-              onPressed: () {
-                
-              },
-            ),
+  child: Text('Forgot password?'),
+  onPressed: () {
+    // Navigate to the ForgotPasswordView
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => forgot_password_view(), // Updated class name
+      ),
+    );
+  },
+),
             Spacer(),
             Text(
               'By using Classroom, you agree to the Terms and Privacy Policy.',
