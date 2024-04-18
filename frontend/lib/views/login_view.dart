@@ -29,7 +29,7 @@ class login_view extends StatelessWidget {
                 suffixIcon: IconButton(
                   icon: Icon(Icons.visibility),
                   onPressed: () {
-                    // TODO: Implement password visibility toggle
+                   
                   },
                 ),
               ),
@@ -38,7 +38,7 @@ class login_view extends StatelessWidget {
             ElevatedButton(
               child: Text('Log in'),
               onPressed: () {
-                // TODO: Implement login logic
+                
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
@@ -47,7 +47,7 @@ class login_view extends StatelessWidget {
             TextButton(
               child: Text('Forgot password?'),
               onPressed: () {
-                // TODO: Implement forgot password logic
+                
               },
             ),
             Spacer(),
