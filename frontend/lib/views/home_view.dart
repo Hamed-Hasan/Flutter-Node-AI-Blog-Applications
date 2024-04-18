@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-import 'login_view.dart'; 
+import 'login_view.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -9,12 +9,10 @@ class HomePage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background Image
-           Image.network(
+          Image.network(
             'https://images.unsplash.com/photo-1563404203912-0b424db17de6?q=80&w=2070&auto=format&fit=crop',
             fit: BoxFit.cover,
           ),
-          // Gradient Overlay
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -24,15 +22,14 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          // Layout for Content
           Column(
-            mainAxisAlignment: MainAxisAlignment.end, // Align content to bottom
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Welcome Text
               Padding(
-                padding: const EdgeInsets.only(bottom: 80, left: 24, right: 24), // Adjust spacing
+                padding: const EdgeInsets.only(
+                    bottom: 80, left: 24, right: 24),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, // Align text to start
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Welcome to Classroom',
@@ -42,7 +39,7 @@ class HomePage extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 8), // Spacing between title and subtitle
+                    SizedBox(height: 8),
                     Text(
                       'Join over 10.000 learners over the World and enjoy online education!',
                       style: TextStyle(
@@ -54,24 +51,22 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
-              // Buttons
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     GFButton(
-                      onPressed: () {/* Handle create account */},
+                      onPressed: () {},
                       text: 'Create an account',
-                      color: Theme.of(context).primaryColor, // Use your primary color
+                      color: Theme.of(context).primaryColor,
                       shape: GFButtonShape.pills,
                       size: GFSize.LARGE,
                       blockButton: true,
                     ),
-                    SizedBox(height: 16), // Spacing between buttons
-                   GFButton(
+                    SizedBox(height: 16),
+                    GFButton(
                       onPressed: () {
-                        // Navigate to the login_view when the button is pressed
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => login_view(),
