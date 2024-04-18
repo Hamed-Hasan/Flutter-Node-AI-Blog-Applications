@@ -66,7 +66,7 @@ class register_view extends StatelessWidget {
                 // Navigate to the LoginView
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                    builder: (context) => login_view(),
+                    builder: (context) => LoginView(),
                   ),
                 );
               },

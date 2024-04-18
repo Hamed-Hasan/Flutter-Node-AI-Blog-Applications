@@ -48,7 +48,7 @@ class forgot_password_view extends StatelessWidget {
                 // Navigate to the LoginView
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => login_view(),
+                    builder: (context) => LoginView(),
                   ),
                 );
               },
