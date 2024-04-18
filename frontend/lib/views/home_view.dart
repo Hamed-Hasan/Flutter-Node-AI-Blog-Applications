@@ -10,12 +10,10 @@ class HomePage extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background Image
           Image.network(
             'https://images.unsplash.com/photo-1563404203912-0b424db17de6?q=80&w=2070&auto=format&fit=crop',
             fit: BoxFit.cover,
           ),
-          // Gradient Overlay
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -25,11 +23,9 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          // Layout for Content
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Welcome Text
               Padding(
                 padding: const EdgeInsets.only(bottom: 80, left: 24, right: 24),
                 child: Column(
@@ -55,7 +51,6 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
-              // Buttons
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
@@ -79,7 +74,6 @@ class HomePage extends StatelessWidget {
                     SizedBox(height: 16),
                     GFButton(
                       onPressed: () {
-                        // Navigate to the login_view when the button is pressed
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (context) => login_view(),

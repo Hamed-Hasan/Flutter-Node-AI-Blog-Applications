@@ -5,7 +5,7 @@ class login_view extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(), // Provides a back button in the app bar
+        leading: BackButton(),
         title: Text('Log into account'),
       ),
       body: Padding(
@@ -13,7 +13,6 @@ class login_view extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            // Email TextFormField
             TextFormField(
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
@@ -21,41 +20,37 @@ class login_view extends StatelessWidget {
                 hintText: 'example@example.com',
               ),
             ),
-            SizedBox(height: 20), // Adds space between input fields
-            // Password TextFormField
+            SizedBox(height: 20),
             TextFormField(
-              obscureText: true, // Hides the password
+              obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter password',
-                // Adds an eye icon to toggle password visibility
                 suffixIcon: IconButton(
                   icon: Icon(Icons.visibility),
                   onPressed: () {
-                    // TODO: Implement password visibility toggle
+                   
                   },
                 ),
               ),
             ),
-            SizedBox(height: 20), // Adds space before the login button
-            // Log in Button
+            SizedBox(height: 20),
             ElevatedButton(
               child: Text('Log in'),
               onPressed: () {
-                // TODO: Implement login logic
+                
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,// Background color
+                backgroundColor: Colors.purple,
               ),
             ),
             TextButton(
               child: Text('Forgot password?'),
               onPressed: () {
-                // TODO: Implement forgot password logic
+                
               },
             ),
-            Spacer(), // Pushes the footer to the end of the screen
-            // Footer Text
+            Spacer(),
             Text(
               'By using Classroom, you agree to the Terms and Privacy Policy.',
               textAlign: TextAlign.center,
