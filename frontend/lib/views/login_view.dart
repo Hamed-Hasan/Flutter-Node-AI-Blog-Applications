@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'forgot_password_view.dart';
 
-class login_view extends StatelessWidget {
+class LoginView extends StatefulWidget {
+  @override
+  _LoginViewState createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  bool _obscureText = true; // Initial value for obscure text
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,14 +30,18 @@ class login_view extends StatelessWidget {
             ),
             SizedBox(height: 20),
             TextFormField(
-              obscureText: true,
+              obscureText: _obscureText, // Use the obscureText value
               decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: 'Enter password',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.visibility),
+                  icon: Icon(
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                  ),
                   onPressed: () {
-                   
+                    setState(() {
+                      _obscureText = !_obscureText; // Toggle the obscureText value
+                    });
                   },
                 ),
               ),
@@ -39,24 +50,24 @@ class login_view extends StatelessWidget {
             ElevatedButton(
               child: Text('Log in'),
               onPressed: () {
-                
+                // TODO: Implement login logic
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
-                 foregroundColor: Colors.white,
+                foregroundColor: Colors.white,
               ),
             ),
             TextButton(
-  child: Text('Forgot password?'),
-  onPressed: () {
-    // Navigate to the ForgotPasswordView
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => forgot_password_view(), // Updated class name
-      ),
-    );
-  },
-),
+              child: Text('Forgot password?'),
+              onPressed: () {
+                // Navigate to the ForgotPasswordView
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => forgot_password_view(),
+                  ),
+                );
+              },
+            ),
             Spacer(),
             Text(
               'By using Classroom, you agree to the Terms and Privacy Policy.',
