@@ -1,11 +1,4 @@
 const { AuthenticationError, ApolloError } = require("apollo-server-express");
-const {
-  getUserDetails,
-  registerUser,
-  loginUser,
-  updateUserProfile,
-  changePassword,
-} = require("../controllers/authController");
 const { generateToken } = require("../middleware/authMiddleware");
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
