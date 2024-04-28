@@ -16,6 +16,7 @@ dependencies:
   graphql_flutter: ^5.1.2
   getwidget: ^4.0.0
   cupertino_icons: ^1.0.6
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:

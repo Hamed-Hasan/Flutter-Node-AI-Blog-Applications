@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/api_service.dart';
 import 'forgot_password_view.dart';
 import 'home_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class LoginView extends StatefulWidget {
@@ -23,35 +24,45 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
+Future<void> _printToken() async {
+  final prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('auth_token');
+  print('Saved token: $token'); // This will print the token to the debug console
+}
+
+
 void _login() async {
   try {
     final user = await _userService.loginUser(
       _usernameController.text, 
       _passwordController.text,
     );
-    // Check if the token is not null and not empty
     if (user?.token?.isNotEmpty == true) {
-      // Navigate to the HomePage
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', user.token!);
+
+      // Verbose debug output
+      print('Token saved successfully');
+      
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => HomePage()),
         (Route<dynamic> route) => false,
       );
     } else {
-      // Handle the situation where the token is null or empty
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Login failed: Invalid token'),
-        ),
-      );
+      // Handle invalid token case
+      print('Invalid token');
     }
   } catch (e) {
+    print(e.toString());  // Verbose debug output
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Failed to login: $e'),
+        content: Text('Failed to login: ${e.toString()}'),
       ),
     );
   }
 }
+
+
 
 
 
