@@ -17,19 +17,20 @@ class User {
     this.token,
   }) : _id = id;
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['_id'],
-      username: json['username'],
-      role: json['role'],
-      bio: json['bio'],
-      profilePicture: json['profilePicture'],
-      socialLinks: json['socialLinks'] != null
-          ? SocialLinks.fromJson(json['socialLinks'])
-          : null,
-      token: json['token'],
-    );
-  }
+factory User.fromJson(Map<String, dynamic> json) {
+  return User(
+    id: json['_id'] as String? ?? '',
+    username: json['username'] as String? ?? '',
+    role: json['role'] as String? ?? '', // Assuming role is not nullable in your User class constructor
+    bio: json['bio'] as String?,
+    profilePicture: json['profilePicture'] as String?,
+    socialLinks: json['socialLinks'] != null
+        ? SocialLinks.fromJson(json['socialLinks'] as Map<String, dynamic>)
+        : null,
+    token: json['token'] as String?,
+  );
+}
+
 }
 
 class SocialLinks {

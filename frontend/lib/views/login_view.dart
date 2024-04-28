@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+// import 'package:scaffold_messenger/scaffold_messenger.dart';
+import '../services/api_service.dart';
 import 'forgot_password_view.dart';
+import 'home_view.dart';
+
 
 class LoginView extends StatefulWidget {
   @override
@@ -7,7 +11,49 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscureText = true; // Initial value for obscure text
+ final UserService _userService = UserService(); // Instantiate your UserService
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+void _login() async {
+  try {
+    final user = await _userService.loginUser(
+      _usernameController.text, 
+      _passwordController.text,
+    );
+    // Check if the token is not null and not empty
+    if (user?.token?.isNotEmpty == true) {
+      // Navigate to the HomePage
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => HomePage()),
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      // Handle the situation where the token is null or empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed: Invalid token'),
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Failed to login: $e'),
+      ),
+    );
+  }
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +68,7 @@ class _LoginViewState extends State<LoginView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             TextFormField(
+              controller: _usernameController, // Add the controller
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 labelText: 'Email',
@@ -30,6 +77,7 @@ class _LoginViewState extends State<LoginView> {
             ),
             SizedBox(height: 20),
             TextFormField(
+              controller: _passwordController, // Add the controller
               obscureText: _obscureText, // Use the obscureText value
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -49,9 +97,7 @@ class _LoginViewState extends State<LoginView> {
             SizedBox(height: 20),
             ElevatedButton(
               child: Text('Log in'),
-              onPressed: () {
-                // TODO: Implement login logic
-              },
+              onPressed: _login, // Call the _login function on press
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.purple,
                 foregroundColor: Colors.white,

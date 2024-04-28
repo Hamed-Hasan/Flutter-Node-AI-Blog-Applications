@@ -47,33 +47,33 @@ class UserService {
   }
 
 
-  Future<User> loginUser(String email, String password) async {
-    final Uri url = Uri.parse('${Constants.baseUrl}/graphql');
+Future<User> loginUser(String username, String password) async {
+  final Uri url = Uri.parse('${Constants.baseUrl}/graphql');
 
-    // The GraphQL mutation for logging in
-    String graphqlMutation = """
-    mutation LoginUser(\$email: String!, \$password: String!) {
-      loginUser(email: \$email, password: \$password) {
-        _id
-        email
-        token
-      }
+  // The GraphQL mutation for logging in, updated with the correct argument
+  String graphqlMutation = """
+  mutation LoginUser(\$username: String!, \$password: String!) {
+    loginUser(username: \$username, password: \$password) {
+      _id
+      username
+      token
     }
-    """;
+  }
+  """;
 
-    final http.Response response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+ final http.Response response = await http.post(
+    url,
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, dynamic>{
+      'query': graphqlMutation,
+      'variables': {
+        'username': username, 
+        'password': password,
       },
-      body: jsonEncode(<String, dynamic>{
-        'query': graphqlMutation,
-        'variables': {
-          'email': email,
-          'password': password,
-        },
-      }),
-    );
+    }),
+  );
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
