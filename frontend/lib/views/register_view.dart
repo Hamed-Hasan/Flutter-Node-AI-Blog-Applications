@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/user_service.dart';
+import '../services/api_service.dart';
 import 'login_view.dart';
 
 class register_view extends StatefulWidget {
@@ -13,7 +13,7 @@ class _RegisterViewState extends State<register_view> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _roleController = TextEditingController();
-  final _userService = UserService();
+  final _RegisterService = RegisterService();
 
   @override
   void dispose() {
@@ -95,7 +95,7 @@ class _RegisterViewState extends State<register_view> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     try {
-                      final user = await _userService.registerUser(
+                      final user = await _RegisterService.registerUser(
                         _usernameController.text,
                         _passwordController.text,
                         _roleController.text,
