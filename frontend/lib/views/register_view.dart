@@ -13,7 +13,7 @@ class _RegisterViewState extends State<register_view> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _roleController = TextEditingController();
-  final _RegisterService = RegisterService();
+  final _UserService = UserService();
 
   @override
   void dispose() {
@@ -95,7 +95,7 @@ class _RegisterViewState extends State<register_view> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     try {
-                      final user = await _RegisterService.registerUser(
+                      final user = await _UserService.registerUser(
                         _usernameController.text,
                         _passwordController.text,
                         _roleController.text,
