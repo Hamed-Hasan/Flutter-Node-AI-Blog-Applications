@@ -21,7 +21,7 @@ factory User.fromJson(Map<String, dynamic> json) {
   return User(
     id: json['_id'] as String? ?? '',
     username: json['username'] as String? ?? '',
-    role: json['role'] as String? ?? '', // Assuming role is not nullable in your User class constructor
+    role: json['role'] as String? ?? '', 
     bio: json['bio'] as String?,
     profilePicture: json['profilePicture'] as String?,
     socialLinks: json['socialLinks'] != null

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'views/home_view.dart'; // Make sure the path matches the location of home_page.dart
+import 'views/home_view.dart'; 
 
 void main() {
   runApp(MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(), // Your HomePage is now set as the home of the app
+      home: HomePage(),
     );
   }
 }

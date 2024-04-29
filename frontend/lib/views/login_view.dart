@@ -92,7 +92,7 @@ class _LoginViewState extends State<LoginView> {
                   onPressed: () {
                     setState(() {
                       _obscureText =
-                          !_obscureText; // Toggle the obscureText value
+                          !_obscureText;
                     });
                   },
                 ),
